@@ -28,26 +28,47 @@ export default function App() {
 
 //here I'm receiving the data prop from the father component
 function Accordion({ data }) {
+  const [curOpen, setCurOpen] = useState(null);
   return (
     <div className="accordion">
       {/* Using map() to  cycle through the array and for 
       every element I create an <AccordionItem/>*/}
       {data.map((el, i) => (
         //Accordion items with props and the key
-        <AccordionItem title={el.title} text={el.text} num={i} key={el.title} />
+        <AccordionItem
+          curOpen={curOpen}
+          onOpen={setCurOpen}
+          title={el.title}
+          num={i}
+          key={el.title}
+        >
+          {el.text}
+        </AccordionItem>
       ))}
+      <AccordionItem
+        curOpen={curOpen}
+        onOpen={setCurOpen}
+        title="Test 1"
+        num={33}
+        key="test 1"
+      >
+        <p>Allows React developers to:</p>
+        <ul>
+          <li>Break up UI into components</li>
+          <li>Make components reusable</li>
+          <li>Place state efficiently</li>
+        </ul>
+      </AccordionItem>
     </div>
   );
 }
 
-function AccordionItem({ num, title, text }) {
-  //Piece of state | initial value is false so that the accordion elements are all close in the beginning
-  const [isOpen, setIsOpen] = useState(false);
+function AccordionItem({ num, title, curOpen, onOpen, children }) {
+  const isOpen = num === curOpen;
 
   //handler function
   function handleToggle() {
-    //Given a curIsOpen (can be true or false) reverse it
-    setIsOpen((curIsOpen) => !isOpen);
+    onOpen(isOpen ? null : num);
   }
 
   //JSX
@@ -58,7 +79,7 @@ function AccordionItem({ num, title, text }) {
       <p className="icon">{isOpen ? "-" : "+"}</p>
 
       {/* If isOpen = false doesn't show the div */}
-      {isOpen && <div className="content-box">{text}</div>}
+      {isOpen && <div className="content-box">{children}</div>}
     </div>
   );
 }
